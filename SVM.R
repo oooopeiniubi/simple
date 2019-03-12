@@ -1,0 +1,9 @@
+letters<-read.csv("letterdata.csv")
+letters_train<-letters[1:16000,]
+letters_test<-letters[16001:20000,]
+library(kernlab)
+SVM_model1<-ksvm(letter~.,data=letters_train,kernel="vanilladot")#kernel=x
+SVMpredict_result<-predict(SVM_model1,letters_test)
+agreement<-SVMpredict_result==letters_test$letter
+table(agreement)
+prop.table(table(agreement))

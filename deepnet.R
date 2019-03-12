@@ -1,0 +1,20 @@
+library(ISLR)
+library(neuralnet)
+data=College
+source("nomalize.R")
+data<-as.data.frame(lapply(data[-1], nomalize))
+private<-as.numeric(College$Private)-1
+data<-cbind(private,data)
+index=sample(1:nrow(data),round(0.7*nrow(data)))
+traindata<-as.data.frame(data[index,])
+testdata<-as.data.frame(data[-index,])
+n=names(traindata)
+deep_net<-neuralnet(private~.,data = traindata,hidden = c(5,3),linear.output = FALSE)
+result<-compute(deep_net,testdata)
+result$net.result<-sapply(result$net.result,round,digits=0)#四舍五入
+table(result$net.result,testdata$private)
+library(lattice)
+library(grid)
+library(DMwR)
+regr.eval(result$net.result,testdata$private,stats = c("mae","rmse"))
+cor(result$net.result,testdata$private)
